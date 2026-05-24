@@ -2,8 +2,7 @@
 // Matches the approved implementation plan
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -52,6 +51,8 @@ model ProgressNote {
 
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+
+  tasks        Task[]
 }
 
 model NeedsServicesPlan {
@@ -90,8 +91,12 @@ model Task {
   status       String    @default("todo") // todo, in_progress, done
   priority     String    @default("medium")
 
-  linkedNoteId String?   // Can link to ProgressNote or NeedsServicesPlan
-  linkedNspId  String?
+  // Optional direct relations
+  progressNoteId String?
+  progressNote   ProgressNote? @relation(fields: [progressNoteId], references: [id])
+
+  needsServicesPlanId String?
+  needsServicesPlan   NeedsServicesPlan? @relation(fields: [needsServicesPlanId], references: [id])
 
   createdBy    String?
   createdAt    DateTime  @default(now())
