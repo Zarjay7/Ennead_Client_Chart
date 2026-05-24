@@ -1,0 +1,114 @@
+// This is your Prisma schema file for Ennead Client Chart (ECC)
+// Matches the approved implementation plan
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// Core Models
+// ============================================
+
+model Client {
+  id          String   @id @default(uuid())
+  firstName   String
+  lastName    String
+  dob         DateTime
+  startDate   DateTime
+  status      String   @default("active") // active, discharged, etc.
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  archivedAt  DateTime?
+
+  progressNotes      ProgressNote[]
+  needsServicesPlans NeedsServicesPlan[]
+  tasks              Task[]
+}
+
+model ProgressNote {
+  id           String    @id @default(uuid())
+  clientId     String
+  client       Client    @relation(fields: [clientId], references: [id])
+
+  serviceDate  DateTime
+  serviceTime  String
+  contactType  String    // F-F, TEL, TH, COM
+  serviceType  String    // AS, CM, TP, DC, CR, IND, PC, O
+  narrative    String    @db.Text
+
+  staffName    String?
+  staffTitle   String?
+
+  signature    String?   // base64 or SVG data
+  finalizedAt  DateTime?
+  createdBy    String?
+  updatedBy    String?
+
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model NeedsServicesPlan {
+  id          String   @id @default(uuid())
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id])
+
+  planDate    DateTime
+  planType    String   // admission, update
+
+  backgroundInfo String? @db.Text
+
+  // Five fixed categories (stored as JSON for flexibility + exact paper match)
+  needsData   Json     // { socialization: {...}, emotional: {...}, ... }
+
+  signatureData Json?  // Store the three signature blocks
+
+  finalizedAt DateTime?
+  createdBy   String?
+  updatedBy   String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tasks       Task[]
+}
+
+model Task {
+  id           String    @id @default(uuid())
+  clientId     String
+  client       Client    @relation(fields: [clientId], references: [id])
+
+  title        String
+  description  String?   @db.Text
+  dueDate      DateTime?
+  status       String    @default("todo") // todo, in_progress, done
+  priority     String    @default("medium")
+
+  linkedNoteId String?   // Can link to ProgressNote or NeedsServicesPlan
+  linkedNspId  String?
+
+  createdBy    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// ============================================
+// Audit Logging (recommended in plan)
+// ============================================
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  entity    String   // "client", "progress_note", "nsp", etc.
+  entityId  String
+  action    String   // create, update, finalize, delete
+  actorId   String?
+  before    Json?
+  after     Json?
+  createdAt DateTime @default(now())
+}
