@@ -43,132 +43,145 @@ export function ProgressNoteForm({
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white border border-gray-300 shadow-sm">
-      {/* Header - mimicking paper form style */}
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold tracking-wide">PROGRESS NOTE</h1>
-      </div>
-
-      {/* Client Info Row */}
-      <div className="grid grid-cols-2 gap-4 mb-6 border-b pb-4">
-        <div>
-          <label className="block text-xs font-semibold text-gray-500">CLIENT NAME</label>
-          <div className="text-lg font-medium">{clientName}</div>
-        </div>
-        <div>
-          <label className="block text-xs font-semibold text-gray-500">DOB</label>
-          <div className="text-lg font-medium">{clientDob}</div>
+    <div className="max-w-[8.5in] mx-auto bg-white border-2 border-black shadow-lg font-sans text-[14px] leading-tight">
+      {/* Official Header Style - mimicking the paper form */}
+      <div className="border-b-2 border-black p-3 bg-gray-50">
+        <div className="text-center">
+          <div className="text-xl font-bold tracking-[3px]">PROGRESS NOTE</div>
+          <div className="text-[10px] text-gray-500 mt-0.5">Ennead • 2740 Fulton Ave Ste. 216 • Sacramento, CA 95821</div>
         </div>
       </div>
 
-      {/* Main Form Fields */}
-      <div className="space-y-6">
-        {/* Date & Time */}
-        <div className="grid grid-cols-2 gap-4">
+      {/* Client Header - exact paper style */}
+      <div className="grid grid-cols-2 border-b border-black">
+        <div className="p-2 border-r border-black">
+          <div className="text-[10px] font-bold text-gray-500">CLIENT / RESIDENT NAME</div>
+          <div className="text-base font-semibold">{clientName}</div>
+        </div>
+        <div className="p-2">
+          <div className="text-[10px] font-bold text-gray-500">DATE OF BIRTH</div>
+          <div className="text-base font-semibold">{clientDob}</div>
+        </div>
+      </div>
+
+      {/* Form Body - trying to match the table structure of the paper */}
+      <div className="p-3 space-y-4">
+
+        {/* Date & Time Row */}
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium mb-1">Service Date</label>
+            <div className="text-[10px] font-bold mb-0.5">SERVICE DATE</div>
             <input
               type="date"
               value={formData.serviceDate}
               onChange={(e) => handleChange('serviceDate', e.target.value)}
               disabled={isFinalized}
-              className="w-full border border-gray-300 px-3 py-2 rounded"
+              className="w-full border border-black px-2 py-1 text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Service Time</label>
+            <div className="text-[10px] font-bold mb-0.5">SERVICE TIME</div>
             <input
               type="time"
               value={formData.serviceTime}
               onChange={(e) => handleChange('serviceTime', e.target.value)}
               disabled={isFinalized}
-              className="w-full border border-gray-300 px-3 py-2 rounded"
+              className="w-full border border-black px-2 py-1 text-sm"
             />
           </div>
         </div>
 
-        {/* Contact Type */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Contact Type</label>
-          <select
-            value={formData.contactType}
-            onChange={(e) => handleChange('contactType', e.target.value)}
-            disabled={isFinalized}
-            className="w-full border border-gray-300 px-3 py-2 rounded"
-          >
-            <option value="">Select...</option>
-            {CONTACT_TYPES.map((type) => (
-              <option key={type.code} value={type.code}>
-                {type.code} — {type.label}
-              </option>
-            ))}
-          </select>
+        {/* Contact Type + Service Type - with legend colors from the paper */}
+        <div className="grid grid-cols-2 gap-3">
+          {/* Contact Type - yellow/tan legend row from paper */}
+          <div>
+            <div className="text-[10px] font-bold mb-0.5 bg-amber-100 px-1">CONTACT TYPE CODE</div>
+            <select
+              value={formData.contactType}
+              onChange={(e) => handleChange('contactType', e.target.value)}
+              disabled={isFinalized}
+              className="w-full border border-black px-2 py-1 text-sm"
+            >
+              <option value="">Select...</option>
+              {CONTACT_TYPES.map((type) => (
+                <option key={type.code} value={type.code}>
+                  {type.code} = {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Service Type - green legend row from paper */}
+          <div>
+            <div className="text-[10px] font-bold mb-0.5 bg-emerald-100 px-1">SERVICE TYPE CODE</div>
+            <select
+              value={formData.serviceType}
+              onChange={(e) => handleChange('serviceType', e.target.value)}
+              disabled={isFinalized}
+              className="w-full border border-black px-2 py-1 text-sm"
+            >
+              <option value="">Select...</option>
+              {SERVICE_TYPES.map((type) => (
+                <option key={type.code} value={type.code}>
+                  {type.code} = {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        {/* Service Type */}
+        {/* Narrative - large box like the paper */}
         <div>
-          <label className="block text-sm font-medium mb-1">Service Type</label>
-          <select
-            value={formData.serviceType}
-            onChange={(e) => handleChange('serviceType', e.target.value)}
-            disabled={isFinalized}
-            className="w-full border border-gray-300 px-3 py-2 rounded"
-          >
-            <option value="">Select...</option>
-            {SERVICE_TYPES.map((type) => (
-              <option key={type.code} value={type.code}>
-                {type.code} — {type.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Narrative */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Narrative</label>
+          <div className="text-[10px] font-bold mb-0.5">NARRATIVE</div>
           <textarea
             value={formData.narrative}
             onChange={(e) => handleChange('narrative', e.target.value)}
             disabled={isFinalized}
-            rows={12}
-            className="w-full border border-gray-300 px-4 py-3 rounded resize-y min-h-[200px]"
+            rows={10}
+            className="w-full border-2 border-black px-3 py-2 text-sm leading-snug resize-y min-h-[180px]"
             placeholder="Enter clinical narrative here..."
           />
         </div>
 
-        {/* Staff Info */}
-        <div>
-          <label className="block text-sm font-medium mb-1">Staff Name / Title</label>
-          <input
-            type="text"
-            value={formData.staffName}
-            onChange={(e) => handleChange('staffName', e.target.value)}
-            disabled={isFinalized}
-            className="w-full border border-gray-300 px-3 py-2 rounded"
-          />
-        </div>
+        {/* Staff + Signature Row */}
+        <div className="grid grid-cols-2 gap-4 pt-2 border-t border-black">
+          <div>
+            <div className="text-[10px] font-bold mb-0.5">STAFF NAME / TITLE</div>
+            <input
+              type="text"
+              value={formData.staffName}
+              onChange={(e) => handleChange('staffName', e.target.value)}
+              disabled={isFinalized}
+              className="w-full border border-black px-2 py-1 text-sm"
+            />
+          </div>
 
-        {/* Signature */}
-        <div>
-          <SignatureCanvas
-            value={formData.signature}
-            onChange={(sig) => handleChange('signature', sig)}
-            label="Staff Signature"
-          />
+          <div>
+            <SignatureCanvas
+              value={formData.signature}
+              onChange={(sig) => handleChange('signature', sig)}
+              label="Staff Signature"
+              height={90}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Footer Actions */}
-      <div className="mt-8 pt-6 border-t flex items-center justify-between">
-        <div className="text-sm text-gray-500">
-          {isFinalized ? 'This note has been finalized.' : 'All fields required to finalize.'}
+      {/* Footer / Actions - paper style */}
+      <div className="border-t-2 border-black p-3 flex items-center justify-between bg-gray-50 text-sm">
+        <div className="text-gray-600">
+          {isFinalized ? (
+            <span className="font-semibold text-green-700">FINALIZED • {new Date().toLocaleDateString()}</span>
+          ) : (
+            "Complete all required fields then sign to finalize"
+          )}
         </div>
         {!isFinalized && (
           <button
             onClick={handleFinalize}
-            className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800 transition"
+            className="bg-black text-white px-5 py-1.5 text-sm hover:bg-gray-800 active:bg-black transition"
           >
-            Finalize & Sign
+            FINALIZE &amp; SIGN
           </button>
         )}
       </div>
